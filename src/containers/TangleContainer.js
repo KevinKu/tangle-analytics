@@ -8,7 +8,6 @@ import {GenerateSubTangle} from '../shared/generateData';
 import Tooltip from 'rc-tooltip';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
-import {getAncestors, getDescendants, getTips} from '../shared/algorithms';
 import './radio-button.css';
 import '../components/Tangle.css';
 
@@ -49,6 +48,12 @@ const lambdaDefault = 1.5;
 const alphaMin = 0;
 const alphaMax = 5;
 const alphaDefault = 0.5;
+const getTips = ({nodes, links}) => {
+	  const tips = nodes.filter(node =>
+		      !links.some(link => link.target === node));
+
+	  return new Set(tips);
+};
 
 
 
