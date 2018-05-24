@@ -133,7 +133,7 @@ const Tangle = props =>
           /> )}
       </g>
       <g>
-        {props.nodes.map(node =>
+	{props.nodes.map(node =>
           <g transform={`translate(${node.x},${node.y})`} key={node.name}
             className={
               `${props.approvedNodes.has(node) ? 'approved' :
@@ -147,7 +147,7 @@ const Tangle = props =>
             <Node
               nodeRadius={props.nodeRadius}
               name={node.name}
-              mouseEntersNodeHandler={props.mouseEntersNodeHandler}
+              mouseEntersNodeHandler={props.mouseLeavesNodeHandler}
               mouseLeavesNodeHandler={props.mouseLeavesNodeHandler} />
             {props.showLabels && <text
               className='unselectable'
@@ -158,7 +158,7 @@ const Tangle = props =>
             </text>}
           </g>)}
       </g>
-      <g>
+	{/*  <g>
         <Axis
           x={props.leftMargin}
           endX={props.width - props.rightMargin}
@@ -167,7 +167,7 @@ const Tangle = props =>
           startVal={0}
           endVal={props.nodes.length < 2 ? 1 : Math.max(...props.nodes.map(n => n.time))}
           />
-      </g>
+      </g> */}
     </svg>
   </div>;
 

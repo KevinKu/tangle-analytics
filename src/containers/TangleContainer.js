@@ -4,16 +4,14 @@ import Tangle from '../components/Tangle';
 import {connect} from 'react-redux';
 import * as d3Force from 'd3-force';
 import {scaleLinear} from 'd3-scale';
-import {generateTangle} from '../shared/generateData';
-import Slider from 'rc-slider';
+import {GenerateSubTangle} from '../shared/generateData';
 import Tooltip from 'rc-tooltip';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import {getAncestors, getDescendants, getTips} from '../shared/algorithms';
 import './radio-button.css';
-import {uniformRandom, unWeightedMCMC, weightedMCMC} from '../shared/tip-selection';
 import '../components/Tangle.css';
-import SliderContainer from './SliderContainer';
+
 
 const mapStateToProps = (state, ownProps) => ({});
 const mapDispatchToProps = (dispatch, ownProps) => ({});
@@ -37,20 +35,6 @@ const getNodeRadius = nodeCount => {
   return scale(nodeCount);
 };
 
-const tipSelectionDictionary = {
-  'UR': {
-    algo: uniformRandom,
-    label: 'Uniform Random',
-  },
-  'UWRW': {
-    algo: unWeightedMCMC,
-    label: 'Unweighted Random Walk',
-  },
-  'WRW': {
-    algo: weightedMCMC,
-    label: 'Weighted Random Walk',
-  },
-};
 
 const leftMargin = 10;
 const rightMargin = 10;
@@ -66,45 +50,6 @@ const alphaMin = 0;
 const alphaMax = 5;
 const alphaDefault = 0.5;
 
-const Handle = Slider.Handle;
-const sliderHandle = props => {
-  const {value, dragging, index, ...restProps} = props;
-  return (
-    <Tooltip
-      prefixCls='rc-slider-tooltip'
-      overlay={value}
-      visible={dragging}
-      placement='top'
-      key={index}
-    >
-      <Handle value={value} {...restProps} />
-    </Tooltip>
-  );
-};
-
-sliderHandle.propTypes = {
-  value: PropTypes.number.isRequired,
-  dragging: PropTypes.bool.isRequired,
-  index: PropTypes.number.isRequired,
-};
-
-const TipAlgorithmLabel = ({selectedAlgorithm, onChange, algoKey}) =>
-  <label className='container' key={algoKey}>
-    <div style={{fontSize: 10}}>
-      {tipSelectionDictionary[algoKey].label}
-    </div>
-    <input type='radio' name='radio' value={algoKey}
-      checked={selectedAlgorithm === algoKey}
-      onChange={onChange}
-    />
-    <span className='checkmark'></span>
-  </label>;
-
-TipAlgorithmLabel.propTypes = {
-  selectedAlgorithm: PropTypes.string.isRequired,
-  onChange: PropTypes.any,
-  algoKey: PropTypes.string.isRequired,
-};
 
 
 class TangleContainer extends React.Component {
@@ -112,15 +57,14 @@ class TangleContainer extends React.Component {
     super();
 
     this.state = {
-      nodes: [],
-      links: [],
+	nodes: [],
+	links: [],
       nodeCount: nodeCountDefault,
       lambda: lambdaDefault,
       alpha: alphaDefault,
       width: 300, // default values
       height: 300,
       nodeRadius: getNodeRadius(nodeCountDefault),
-      tipSelectionAlgorithm: 'UR',
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
 
@@ -146,7 +90,7 @@ class TangleContainer extends React.Component {
     window.removeEventListener('resize', this.updateWindowDimensions);
   }
   componentDidMount() {
-    this.startNewTangle();
+    this.GraphSubTangle();
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
   }
@@ -165,15 +109,12 @@ class TangleContainer extends React.Component {
       this.force.restart().alpha(1);
     });
   }
-  startNewTangle() {
-    const nodeRadius = getNodeRadius(this.state.nodeCount);
-    const tangle = generateTangle({
-      nodeCount: this.state.nodeCount,
-      lambda: this.state.lambda,
-      alpha: this.state.alpha,
-      nodeRadius,
-      tipSelectionAlgorithm: tipSelectionDictionary[this.state.tipSelectionAlgorithm].algo,
-    });
+
+
+
+  GraphSubTangle(RootTransactionHash="") {
+    const nodeRadius = getNodeRadius(6);
+    const tangle = GenerateSubTangle({RootTransactionHash});
 
     const {width, height} = this.state;
 
@@ -252,94 +193,23 @@ class TangleContainer extends React.Component {
       root,
     });
   }
-  handleTipSelectionRadio(event) {
-    this.setState({
-      tipSelectionAlgorithm: event.target.value,
-    }, () => {
-      this.startNewTangle();
-    });
-  }
-  render() {
+
+
+
+
+
+    render() {
     const {nodeCount,lambda,alpha, width, height} = this.state;
     const approved = this.getApprovedNodes(this.state.hoveredNode);
     const approving = this.getApprovingNodes(this.state.hoveredNode);
 
     return (
-      <div>
-        <div className='top-bar-container' style={{width}}>
-          <div className='left-cell'></div>
-          <div className='right-cell'></div>
-          <div className='top-bar-row'>
-            <div className='slider-title'>Number of transactions</div>
-            <div className='slider-container'>
-              <SliderContainer
-                min={nodeCountMin}
-                max={nodeCountMax}
-                defaultValue={nodeCountDefault}
-                value={nodeCount}
-                step={1}
-                marks={{[nodeCountMin]: `${nodeCountMin}`, [nodeCountMax]: `${nodeCountMax}`}}
-                handle={sliderHandle}
-                onChange={nodeCount => {
-                  this.setState(Object.assign(this.state, {nodeCount}));
-                  this.startNewTangle();
-                }} />
-            </div>
-            <div className='tip-algo-label'>
-              <TipAlgorithmLabel
-                algoKey='UR'
-                selectedAlgorithm={this.state.tipSelectionAlgorithm}
-                onChange={this.handleTipSelectionRadio.bind(this)} />
-            </div>
-          </div>
-          <div className='top-bar-row'>
-            <div className='slider-title'>Transaction rate (λ)</div>
-            <div className='slider-container'>
-              <SliderContainer
-                min={lambdaMin}
-                max={lambdaMax}
-                step={0.2}
-                defaultValue={lambdaDefault}
-                value={lambda}
-                marks={{[lambdaMin]: `${lambdaMin}`, [lambdaMax]: `${lambdaMax}`}}
-                handle={sliderHandle}
-                onChange={lambda => {
-                  this.setState(Object.assign(this.state, {lambda}));
-                  this.startNewTangle();
-                }} />
-            </div>
-            <div className='tip-algo-label'>
-              <TipAlgorithmLabel
-                algoKey='UWRW'
-                selectedAlgorithm={this.state.tipSelectionAlgorithm}
-                onChange={this.handleTipSelectionRadio.bind(this)} />
-            </div>
-          </div>
-          <div className='top-bar-row'>
-            <div className='slider-title'>alpha</div>
-            <div className='slider-container'>
-              <SliderContainer
-                min={alphaMin}
-                max={alphaMax}
-                step={0.001}
-                defaultValue={alphaDefault}
-                value={alpha}
-                marks={{[alphaMin]: `${alphaMin}`, [alphaMax]: `${alphaMax}`}}
-                handle={sliderHandle}
-                disabled={this.state.tipSelectionAlgorithm !== 'WRW'}
-                onChange={alpha => {
-                  this.setState(Object.assign(this.state, {alpha}));
-                  this.startNewTangle();
-                }} />
-            </div>
-            <div className='tip-algo-label'>
-              <TipAlgorithmLabel
-                algoKey='WRW'
-                selectedAlgorithm={this.state.tipSelectionAlgorithm}
-                onChange={this.handleTipSelectionRadio.bind(this)} />
-            </div>
-          </div>
-        </div>
+      <div> 
+	     <button onClick={(e) =>{ 
+		     e.preventDefault();
+		     this.GraphSubTangle();}}>try</button>
+	    
+	 <br></br>   
         <Tangle links={this.state.links} nodes={this.state.nodes}
           nodeCount={6}
           width={width}
@@ -347,7 +217,7 @@ class TangleContainer extends React.Component {
           leftMargin={leftMargin}
           rightMargin={rightMargin}
           nodeRadius={this.state.nodeRadius}
-          mouseEntersNodeHandler={this.mouseEntersNodeHandler.bind(this)}
+	  mouseEntersNodeHandler={this.mouseLeavesNodeHandler.bind(this)}
           mouseLeavesNodeHandler={this.mouseLeavesNodeHandler.bind(this)}
           approvedNodes={approved.nodes}
           approvedLinks={approved.links}

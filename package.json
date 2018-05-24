@@ -41,5 +41,7 @@
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.11.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "iota.lib.js": "^0.4.7"
+  }
 }
