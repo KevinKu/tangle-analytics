@@ -4,12 +4,14 @@ import Tangle from '../components/Tangle';
 import {connect} from 'react-redux';
 import * as d3Force from 'd3-force';
 import {scaleLinear} from 'd3-scale';
-import {GenerateSubTangle} from '../shared/generateData';
 import Tooltip from 'rc-tooltip';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import './radio-button.css';
 import '../components/Tangle.css';
+import IOTA from 'iota.lib.js';
+import iotap from 'iotap';
+
 
 
 const mapStateToProps = (state, ownProps) => ({});
@@ -62,15 +64,28 @@ class TangleContainer extends React.Component {
     super();
 
     this.state = {
-	nodes: [],
-	links: [],
+      nodes: [],
+      links: [],
       nodeCount: nodeCountDefault,
       lambda: lambdaDefault,
       alpha: alphaDefault,
       width: 300, // default values
       height: 300,
       nodeRadius: getNodeRadius(nodeCountDefault),
+      rootTransactionHash:"",
+      requestServer: iotap.create(new IOTA({
+	    'host':'https://potato.iotasalad.org' ,
+	    'port':14265 
+	})) ,
+      subTangleTips:[],
+      time:0,
+      live:1,
+      intervalID:0,
     };
+
+
+
+
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
 
     this.force = d3Force.forceSimulation();
@@ -117,30 +132,129 @@ class TangleContainer extends React.Component {
 
 
 
-  GraphSubTangle(RootTransactionHash="") {
-    const nodeRadius = getNodeRadius(6);
-    const tangle = GenerateSubTangle({RootTransactionHash});
+  GraphSubTangle() {
+    	const nodeRadius = getNodeRadius(6);
 
-    const {width, height} = this.state;
 
-    for (let node of tangle.nodes) {
-      node.y = height/4 + Math.random()*(height/2),
-      node.x = width/2; // required to avoid annoying errors
-    }
+	  let c_subTangleTips = [];
+	  let c_nodes = [];
+		  
 
-    this.force.stop();
+	  c_nodes.push({name:'0',time:0,transactionHash:this.state.rootTransactionHash,nodeIndex:0,});
 
-    this.setState({
-      nodes: tangle.nodes,
-      links: tangle.links,
-      nodeRadius,
-    }, () => {
-      // Set all nodes' x by time value after state has been set
-      this.recalculateFixedPositions();
-    });
+	  c_subTangleTips.push({name:'0',time:0,transactionHash:this.state.rootTransactionHash,nodeIndex:0,});
 
-    this.force.restart().alpha(1);
-  }
+
+
+	let ID = setInterval(()=>{this.DrawNextApprovees();},3000); 
+
+	this.setState({
+			nodes: c_nodes,
+			links: [],
+			subTangleTips: c_subTangleTips,
+			time: 0,
+      			nodeRadius,
+			intervalID: ID,
+			live: 1,
+    			}, );
+
+
+
+      }
+
+
+	DrawNextApprovees(){
+
+		const nodeRadius = getNodeRadius(6);
+
+		let tangle = "";
+		let c_subTangleTips = [];
+	  	let c_nodes = this.state.nodes;
+	  	let c_links = this.state.links;
+	  	let c_time = this.state.time + 0.2;
+		let s_node = this.state.requestServer;
+
+		if(this.state.live == 0){
+				return ;
+			}
+		
+
+		if(this.state.subTangleTips.length > 0){
+
+		for(let findTransaction of this.state.subTangleTips){
+
+
+		 const approve_list = s_node.findTransactions({'approvees': [findTransaction.transactionHash]});
+
+	Promise.all([approve_list]).then(([approve_list])=>{
+		
+	  	if(approve_list.length > 0){	
+
+
+		for(let a_transaction of approve_list){
+		
+			let exist = 0;
+			
+			for(let site of c_nodes){
+				if(a_transaction == site.transactionHash){
+					exist = 1;
+				
+				}
+			}
+
+			if(exist == 0){
+			let c_nodeIndex = c_nodes.length;
+			c_nodes.push({name:c_nodeIndex.toString(),time:c_time,transactionHash:a_transaction,nodeIndex:c_nodeIndex,});
+			c_subTangleTips.push({name:c_nodeIndex.toString(),time:c_time,transactionHash:a_transaction,nodeIndex:c_nodeIndex,});
+			c_links.push({source:c_nodes[c_nodeIndex],target:c_nodes[findTransaction.nodeIndex]});
+			}
+			
+	
+			}
+
+		}
+
+	
+	});
+
+		}
+			}
+
+
+
+		tangle = {nodes:c_nodes,links:c_links};
+
+		console.log(c_subTangleTips);
+
+		const {width, height} = this.state;
+
+
+    		for (let node of tangle.nodes) {
+      			node.y = height/4 + Math.random()*(height/2),
+      			node.x = width/2; // required to avoid annoying errors
+    			}
+
+    			this.force.stop();
+
+    			this.setState({
+      			nodes: tangle.nodes,
+      			links: tangle.links,
+			subTangleTips: c_subTangleTips,
+			time: c_time,
+      			nodeRadius,
+    			}, () => {
+      			// Set all nodes' x by time value after state has been set
+      			this.recalculateFixedPositions();
+    			});
+
+    			this.force.restart().alpha(1);
+
+
+			return ;
+
+	}
+
+
   recalculateFixedPositions() {
     // Set genesis's y to center
     const genesisNode = this.state.nodes[0];
@@ -210,11 +324,28 @@ class TangleContainer extends React.Component {
 
     return (
       <div> 
+	    <form >
+	            <label>
+
+	              SubTangle:
+	              <input type="text"   onChange={e => this.setState({rootTransactionHash: e.target.value})} />
+	            </label>
+	            <input type="submit" value="Graph" onClick={(e)=>{
+		e.preventDefault();
+		 this.GraphSubTangle();
+		    }} />
+	          </form>
+			    <br></br>
 	     <button onClick={(e) =>{ 
-		     e.preventDefault();
-		     this.GraphSubTangle();}}>try</button>
-	    
-	 <br></br>   
+		     		     e.preventDefault();
+		     		     this.setState({nodes:[],links:[],time:0});
+	     			     
+		     		     clearInterval(this.state.intervalID);
+	     }}>clear</button>
+	    <br></br>
+	    <button onClick={(e)=>{this.setState({live:0});}}>stop</button>
+	    <button onClick={(e)=>{this.setState({live:1});}}>carry on</button>
+	    <br></br>
         <Tangle links={this.state.links} nodes={this.state.nodes}
           nodeCount={6}
           width={width}
