@@ -81,6 +81,7 @@ class TangleContainer extends React.Component {
       time:0,
       live:1,
       intervalID:0,
+      current_transactionHash:"",
     };
 
 
@@ -134,6 +135,15 @@ class TangleContainer extends React.Component {
     });
   }
 
+
+	ShowTransactionHash(e){
+	
+	const node_index = Number(e.target.getAttribute("name"));
+
+
+	this.setState({current_transactionHash:this.state.nodes[node_index].transactionHash});
+
+}
 
 
   GraphSubTangle() {
@@ -283,20 +293,9 @@ class TangleContainer extends React.Component {
 
     return scale(time);
   }
-  mouseEntersNodeHandler(e) {
-    const name = e.target.getAttribute('name');
-    this.setState({
-      hoveredNode: this.state.nodes.find(node => node.name === name),
-    });
-  }
-  mouseLeavesNodeHandler(e) {
-    this.setState({
-      hoveredNode: undefined,
-    });
 
-	  console.log(this.state.subTangleTips);
-  }
-  getApprovedNodes(root) {
+
+   getApprovedNodes(root) {
     if (!root) {
       return {nodes: new Set(), links: new Set()};
     }
@@ -344,7 +343,7 @@ class TangleContainer extends React.Component {
 			    <br></br>
 	     <button onClick={(e) =>{ 
 		     		     e.preventDefault();
-		     		     this.setState({nodes:[],links:[],time:0});
+		     		     this.setState({nodes:[],links:[],time:0,current_transactionHash:""});
 	     			     
 		     		     clearInterval(this.state.intervalID);
 	     }}>clear</button>
@@ -359,8 +358,7 @@ class TangleContainer extends React.Component {
           leftMargin={leftMargin}
           rightMargin={rightMargin}
           nodeRadius={this.state.nodeRadius}
-	  mouseEntersNodeHandler={this.mouseLeavesNodeHandler.bind(this)}
-          mouseLeavesNodeHandler={this.mouseLeavesNodeHandler.bind(this)}
+	  mouseEntersNodeHandler={this.ShowTransactionHash.bind(this)}
           approvedNodes={approved.nodes}
           approvedLinks={approved.links}
           approvingNodes={approving.nodes}
@@ -372,6 +370,10 @@ class TangleContainer extends React.Component {
           })}
           showLabels={this.state.nodeRadius > showLabelsMinimumRadius ? true : false}
         />
+	    <div>
+	    <p>Transaction Hash :</p>
+	    <p>{this.state.current_transactionHash}</p>
+	    </div>
       </div>
     );
   }

@@ -81,8 +81,8 @@ Marker.propTypes = {
   nodeRadius: PropTypes.number.isRequired,
 };
 
-const Node = ({nodeRadius, mouseEntersNodeHandler, mouseLeavesNodeHandler, name}) =>
-  <rect width={nodeRadius} height={nodeRadius}
+const Node = ({nodeRadius, name, mouseEntersNodeHandler}) =>{
+  return <rect width={nodeRadius} height={nodeRadius}
     x={-nodeRadius/2}
     y={-nodeRadius/2}
     rx={nodeRadius/5}
@@ -91,14 +91,17 @@ const Node = ({nodeRadius, mouseEntersNodeHandler, mouseLeavesNodeHandler, name}
     strokeWidth='1px'
     fill='white'
     name={name}
-    onMouseEnter={mouseEntersNodeHandler}
-    onMouseLeave={mouseLeavesNodeHandler} >
+    onMouseEnter={(e)=>{mouseEntersNodeHandler(e)}}		
+		
+		
+		>
   </rect>;
+
+}
 
 Node.propTypes = {
   nodeRadius: PropTypes.number.isRequired,
   mouseEntersNodeHandler: PropTypes.any,
-  mouseLeavesNodeHandler: PropTypes.any,
   name: PropTypes.string,
 };
 
@@ -158,8 +161,8 @@ const Tangle = props =>
             <Node
               nodeRadius={props.nodeRadius}
               name={node.name}
-              mouseEntersNodeHandler={props.mouseLeavesNodeHandler}
-              mouseLeavesNodeHandler={props.mouseLeavesNodeHandler} />
+	      mouseEntersNodeHandler={props.mouseEntersNodeHandler}	
+		/>
             {props.showLabels && <text
               className='unselectable'
               fill='#666' fontFamily='Helvetica'
