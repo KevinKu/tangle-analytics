@@ -91,19 +91,23 @@ class TangleContainer extends React.Component {
     this.force = d3Force.forceSimulation();
     this.force.alphaDecay(0.1);
 
+	  
     this.force.on('tick', () => {
       this.force.nodes(this.state.nodes);
 
       // restrict nodes to window area
+	/*
       for (let node of this.state.nodes) {
         node.y = Math.max(this.state.nodeRadius, Math.min(this.state.height - this.state.nodeRadius, node.y));
       }
-
+	*/
       this.setState({
         links: this.state.links,
         nodes: this.state.nodes,
       });
     });
+
+	  
   }
   componentWillUnmount() {
     this.force.stop();
@@ -133,7 +137,7 @@ class TangleContainer extends React.Component {
 
 
   GraphSubTangle() {
-    	const nodeRadius = getNodeRadius(6);
+    	const nodeRadius = getNodeRadius(1);
 
 
 	  let c_subTangleTips = [];
@@ -167,11 +171,12 @@ class TangleContainer extends React.Component {
 
 		const nodeRadius = getNodeRadius(6);
 
+
 		let tangle = "";
 		let c_subTangleTips = [];
 	  	let c_nodes = this.state.nodes;
 	  	let c_links = this.state.links;
-	  	let c_time = this.state.time + 0.2;
+	  	let c_time = this.state.time + 1;
 		let s_node = this.state.requestServer;
 
 		if(this.state.live == 0){
@@ -204,8 +209,9 @@ class TangleContainer extends React.Component {
 
 			if(exist == 0){
 			let c_nodeIndex = c_nodes.length;
-			c_nodes.push({name:c_nodeIndex.toString(),time:c_time,transactionHash:a_transaction,nodeIndex:c_nodeIndex,});
-			c_subTangleTips.push({name:c_nodeIndex.toString(),time:c_time,transactionHash:a_transaction,nodeIndex:c_nodeIndex,});
+			let node_time = c_time + Math.random();
+			c_nodes.push({name:c_nodeIndex.toString(),time:node_time,transactionHash:a_transaction,nodeIndex:c_nodeIndex,});
+			c_subTangleTips.push({name:c_nodeIndex.toString(),time:node_time,transactionHash:a_transaction,nodeIndex:c_nodeIndex,});
 			c_links.push({source:c_nodes[c_nodeIndex],target:c_nodes[findTransaction.nodeIndex]});
 			}
 			
@@ -224,16 +230,16 @@ class TangleContainer extends React.Component {
 
 		tangle = {nodes:c_nodes,links:c_links};
 
-		console.log(c_subTangleTips);
 
 		const {width, height} = this.state;
 
-
+		/*
     		for (let node of tangle.nodes) {
       			node.y = height/4 + Math.random()*(height/2),
       			node.x = width/2; // required to avoid annoying errors
     			}
 
+		*/
     			this.force.stop();
 
     			this.setState({
@@ -244,14 +250,12 @@ class TangleContainer extends React.Component {
       			nodeRadius,
     			}, () => {
       			// Set all nodes' x by time value after state has been set
-      			this.recalculateFixedPositions();
+      			//this.recalculateFixedPositions();
     			});
 
     			this.force.restart().alpha(1);
 
-
-			return ;
-
+	
 	}
 
 
@@ -289,6 +293,8 @@ class TangleContainer extends React.Component {
     this.setState({
       hoveredNode: undefined,
     });
+
+	  console.log(this.state.subTangleTips);
   }
   getApprovedNodes(root) {
     if (!root) {

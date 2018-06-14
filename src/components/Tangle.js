@@ -1,8 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as d3Scale from 'd3-scale';
+import {ReactSVGPanZoom} from 'react-svg-pan-zoom';
 
-const Axis = ({x, endX, y, startVal, endVal, ticks}) => {
+
+
+
+
+
+const   Axis = ({x, endX, y, startVal, endVal, ticks}) => {
   const tickSize = 5;
 
   const xScale = d3Scale.scaleLinear().domain([startVal, endVal]);
@@ -41,7 +47,7 @@ const Axis = ({x, endX, y, startVal, endVal, ticks}) => {
           y={y + 3.2 * tickSize}>
           {value}
         </text>
-      )}}
+      )}
     </g>
   );
 };
@@ -115,7 +121,12 @@ const generateLinkPath = ({link, nodeRadius}) => {
 
 const Tangle = props =>
   <div>
-    <svg width={props.width} height={props.height}>
+
+	 <ReactSVGPanZoom
+	  background={"#ffffff"}
+          width={props.width} height={props.height}>
+
+	    <svg  width={props.width} height={props.height}>
       <defs>
         <Marker color='black' id='arrowhead' nodeRadius={props.nodeRadius} />
         <Marker color='red' id='arrowhead-approved' nodeRadius={props.nodeRadius} />
@@ -168,8 +179,9 @@ const Tangle = props =>
           endVal={props.nodes.length < 2 ? 1 : Math.max(...props.nodes.map(n => n.time))}
           />
       </g> */}
-    </svg>
-  </div>;
+    		</svg>
+	</ReactSVGPanZoom>
+    </div>;
 
 Tangle.propTypes = {
   links: PropTypes.array.isRequired,

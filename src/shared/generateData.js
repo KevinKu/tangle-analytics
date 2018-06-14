@@ -1,20 +1,18 @@
 const jStat = require('jStat').jStat;
-var IOTA = require('../../node_modules/iota.lib.js');
+import IOTA from 'iota.lib.js';
+import iotap from 'iotap';
 
-export const GenerateSubTangle = ({RootTransactionHash}) => {
+export const GenerateSubTangle = () => {
 
 
 	var iota = new IOTA({'host':'http://node.deviceproof.org','port':'14265'})
 
-	let nodeinfo="G";
-
-	nodeinfo = iota.api.getNodeInfo(function getnodeinfo(error,nodeinfo)
-		{
-			if(nodeinfo)
-				{
-					return nodeinfo;
-				}
-		});
+	
+	/*
+	iota.api.getNodeInfo(function(error,nodedata){
+		console.log(nodedata);
+	});
+	*/
 
 
   jStat.exponential.sample(1.5);
@@ -23,12 +21,9 @@ export const GenerateSubTangle = ({RootTransactionHash}) => {
   let nodes = [];
   
 
-	nodes.push({name:'0',time:'0',});
-	nodes.push({name:'1',time:'0.5',});
-	nodes.push({name:'2',time:'1',});
-	nodes.push({name:'3',time:'1.5',});
-	nodes.push({name:'4',time:'2',});
-
+	nodes.push({name:0,time:0,});
+	nodes.push({name:1,time:0.5,});
+	
 /*
 
   while (nodes.length < nodeCount) {
@@ -49,12 +44,6 @@ export const GenerateSubTangle = ({RootTransactionHash}) => {
   const links = [];
 
 	links.push({source: nodes[1], target: nodes[0]});
-	links.push({source: nodes[2], target: nodes[0]});
-	links.push({source: nodes[2], target: nodes[1]});
-	links.push({source: nodes[3], target: nodes[2]});
-	links.push({source: nodes[3], target: nodes[1]});
-	links.push({source: nodes[4], target: nodes[3]});
-	links.push({source: nodes[4], target: nodes[2]});
 
 
 /*
