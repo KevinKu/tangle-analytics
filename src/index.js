@@ -12,7 +12,7 @@ render(
 	 <div>
       <div className='title-bar-container'>
         <div className='left-title'>
-          <h2>Iota Tangle Analyst</h2>
+          <h2> Tangle Analyst</h2>
         </div>
         <div className='right-title'>
           <p>
