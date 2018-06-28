@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Tangle from '../components/Tangle';
 import {connect} from 'react-redux';
+import Tooltip from 'rc-tooltip';
 import * as d3Force from 'd3-force';
 import {scaleLinear} from 'd3-scale';
-import Tooltip from 'rc-tooltip';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import './radio-button.css';
@@ -69,12 +69,12 @@ class TangleContainer extends React.Component {
       nodeCount: nodeCountDefault,
       lambda: lambdaDefault,
       alpha: alphaDefault,
-      width: 300, // default values
+      width: 900, // default values
       height: 300,
       nodeRadius: getNodeRadius(nodeCountDefault),
       rootTransactionHash:"",
       requestServer: iotap.create(new IOTA({
-	    'host':'https://potato.iotasalad.org' ,
+	    'host':'http://node.deviceproof.org' ,
 	    'port':14265 
 	})) ,
       subTangleTips:[],
@@ -85,7 +85,7 @@ class TangleContainer extends React.Component {
     };
 
 
-
+/*
 
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
 
@@ -97,19 +97,22 @@ class TangleContainer extends React.Component {
       this.force.nodes(this.state.nodes);
 
       // restrict nodes to window area
-	/*
+	
       for (let node of this.state.nodes) {
         node.y = Math.max(this.state.nodeRadius, Math.min(this.state.height - this.state.nodeRadius, node.y));
       }
-	*/
+	    
+	
       this.setState({
         links: this.state.links,
         nodes: this.state.nodes,
       });
     });
-
+*/
 	  
   }
+
+	/*
   componentWillUnmount() {
     this.force.stop();
     window.removeEventListener('resize', this.updateWindowDimensions);
@@ -134,14 +137,14 @@ class TangleContainer extends React.Component {
       this.force.restart().alpha(1);
     });
   }
-
+*/
 
 	ShowTransactionHash(e){
 	
 	const node_index = Number(e.target.getAttribute("name"));
 
 
-	this.setState({current_transactionHash:this.state.nodes[node_index].transactionHash});
+	this.setState({current_transactionHash:this.state.nodes[node_index].transactionHash,});
 
 }
 
@@ -154,9 +157,9 @@ class TangleContainer extends React.Component {
 	  let c_nodes = [];
 		  
 
-	  c_nodes.push({name:'0',time:0,transactionHash:this.state.rootTransactionHash,nodeIndex:0,});
+	  c_nodes.push({name:'0',transactionHash:this.state.rootTransactionHash,nodeIndex:0,x:0,y:150,});
 
-	  c_subTangleTips.push({name:'0',time:0,transactionHash:this.state.rootTransactionHash,nodeIndex:0,});
+	  c_subTangleTips.push({name:'0',transactionHash:this.state.rootTransactionHash,nodeIndex:0,x:0,y:150,});
 
 
 
@@ -196,14 +199,19 @@ class TangleContainer extends React.Component {
 
 		if(this.state.subTangleTips.length > 0){
 
+		
 		for(let findTransaction of this.state.subTangleTips){
 
 
 		 const approve_list = s_node.findTransactions({'approvees': [findTransaction.transactionHash]});
 
 	Promise.all([approve_list]).then(([approve_list])=>{
-		
+	
+
+		console.log(approve_list);
+
 	  	if(approve_list.length > 0){	
+
 
 
 		for(let a_transaction of approve_list){
@@ -219,10 +227,15 @@ class TangleContainer extends React.Component {
 
 			if(exist == 0){
 			let c_nodeIndex = c_nodes.length;
-			let node_time = c_time + Math.random();
-			c_nodes.push({name:c_nodeIndex.toString(),time:node_time,transactionHash:a_transaction,nodeIndex:c_nodeIndex,});
-			c_subTangleTips.push({name:c_nodeIndex.toString(),time:node_time,transactionHash:a_transaction,nodeIndex:c_nodeIndex,});
+			let c_node_x = findTransaction.x + 500 + 250*Math.random();
+			let c_node_y = findTransaction.y + (200 + approve_list.length*50)*(Math.random() - 0.5);
+
+			c_nodes.push({name:c_nodeIndex.toString(),transactionHash:a_transaction,nodeIndex:c_nodeIndex,x:c_node_x,y:c_node_y,});
+			c_subTangleTips.push({name:c_nodeIndex.toString(),transactionHash:a_transaction,nodeIndex:c_nodeIndex,x:c_node_x,y:c_node_y,});
 			c_links.push({source:c_nodes[c_nodeIndex],target:c_nodes[findTransaction.nodeIndex]});
+
+
+			
 			}
 			
 	
@@ -234,14 +247,19 @@ class TangleContainer extends React.Component {
 	});
 
 		}
+
+
+			
+
 			}
+
+
 
 
 
 		tangle = {nodes:c_nodes,links:c_links};
 
 
-		const {width, height} = this.state;
 
 		/*
     		for (let node of tangle.nodes) {
@@ -250,20 +268,19 @@ class TangleContainer extends React.Component {
     			}
 
 		*/
-    			this.force.stop();
+    			//this.force.stop();
 
     			this.setState({
       			nodes: tangle.nodes,
       			links: tangle.links,
 			subTangleTips: c_subTangleTips,
-			time: c_time,
       			nodeRadius,
     			}, () => {
       			// Set all nodes' x by time value after state has been set
       			//this.recalculateFixedPositions();
     			});
 
-    			this.force.restart().alpha(1);
+    			//this.force.restart().alpha(1);
 
 	
 	}
@@ -343,7 +360,7 @@ class TangleContainer extends React.Component {
 			    <br></br>
 	     <button onClick={(e) =>{ 
 		     		     e.preventDefault();
-		     		     this.setState({nodes:[],links:[],time:0,current_transactionHash:""});
+		     		     this.setState({nodes:[],links:[],time:0,current_transactionHash:"",width:900,height:300});
 	     			     
 		     		     clearInterval(this.state.intervalID);
 	     }}>clear</button>

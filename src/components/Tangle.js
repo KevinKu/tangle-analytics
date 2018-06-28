@@ -8,6 +8,7 @@ import {ReactSVGPanZoom} from 'react-svg-pan-zoom';
 
 
 
+
 const   Axis = ({x, endX, y, startVal, endVal, ticks}) => {
   const tickSize = 5;
 
@@ -83,10 +84,10 @@ Marker.propTypes = {
 
 const Node = ({nodeRadius, name, mouseEntersNodeHandler}) =>{
   return <rect width={nodeRadius} height={nodeRadius}
-    x={-nodeRadius/2}
-    y={-nodeRadius/2}
-    rx={nodeRadius/5}
-    ry={nodeRadius/5}
+    x={-nodeRadius/8}
+    y={-nodeRadius/8}
+    rx={nodeRadius/20}
+    ry={nodeRadius/20}
     stroke='black'
     strokeWidth='1px'
     fill='white'
@@ -123,11 +124,13 @@ const generateLinkPath = ({link, nodeRadius}) => {
 };
 
 const Tangle = props =>
-  <div>
-
+  <div >
+		    
 	 <ReactSVGPanZoom
-	  background={"#ffffff"}
-          width={props.width} height={props.height}>
+	  background={"#ffffff"} miniaturePosition={"none"} 
+          width={props.width} height={props.height}
+	  detectAutoPan={false}
+		>
 
 	    <svg  width={props.width} height={props.height}>
       <defs>
@@ -162,14 +165,14 @@ const Tangle = props =>
               nodeRadius={props.nodeRadius}
               name={node.name}
 	      mouseEntersNodeHandler={props.mouseEntersNodeHandler}	
-		/>
+		/>{/*
             {props.showLabels && <text
               className='unselectable'
               fill='#666' fontFamily='Helvetica'
               alignmentBaseline='middle' textAnchor='middle'
               pointerEvents='none'>
               {node.name}
-            </text>}
+            </text>}*/}
           </g>)}
       </g>
 	{/*  <g>
@@ -182,8 +185,8 @@ const Tangle = props =>
           endVal={props.nodes.length < 2 ? 1 : Math.max(...props.nodes.map(n => n.time))}
           />
       </g> */}
-    		</svg>
-	</ReactSVGPanZoom>
+    			</svg>
+		</ReactSVGPanZoom>
     </div>;
 
 Tangle.propTypes = {
