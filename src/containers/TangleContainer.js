@@ -85,59 +85,9 @@ class TangleContainer extends React.Component {
     };
 
 
-/*
-
-    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
-
-    this.force = d3Force.forceSimulation();
-    this.force.alphaDecay(0.1);
-
-	  
-    this.force.on('tick', () => {
-      this.force.nodes(this.state.nodes);
-
-      // restrict nodes to window area
-	
-      for (let node of this.state.nodes) {
-        node.y = Math.max(this.state.nodeRadius, Math.min(this.state.height - this.state.nodeRadius, node.y));
-      }
-	    
-	
-      this.setState({
-        links: this.state.links,
-        nodes: this.state.nodes,
-      });
-    });
-*/
 	  
   }
 
-	/*
-  componentWillUnmount() {
-    this.force.stop();
-    window.removeEventListener('resize', this.updateWindowDimensions);
-  }
-  componentDidMount() {
-    this.GraphSubTangle();
-    this.updateWindowDimensions();
-    window.addEventListener('resize', this.updateWindowDimensions);
-  }
-  updateWindowDimensions() {
-    this.setState({
-      width: window.innerWidth - leftMargin - rightMargin,
-      height: window.innerWidth < 768 ? window.innerHeight : window.innerHeight - bottomMargin,
-    }, () => {
-      this.recalculateFixedPositions();
-      this.force
-        .force('no_collision', d3Force.forceCollide().radius(this.state.nodeRadius * 2).strength(0.01).iterations(15))
-        .force('pin_y_to_center', d3Force.forceY().y(d => this.state.height / 2).strength(0.1))
-        .force('pin_x_to_time', d3Force.forceX().x(d => this.xFromTime(d.time)).strength(1))
-        .force('link', d3Force.forceLink().links(this.state.links).strength(0.5).distance(this.state.nodeRadius*3)); // strength in [0,1]
-
-      this.force.restart().alpha(1);
-    });
-  }
-*/
 
 	ShowTransactionHash(e){
 	
@@ -261,55 +211,19 @@ class TangleContainer extends React.Component {
 
 
 
-		/*
-    		for (let node of tangle.nodes) {
-      			node.y = height/4 + Math.random()*(height/2),
-      			node.x = width/2; // required to avoid annoying errors
-    			}
-
-		*/
-    			//this.force.stop();
-
     			this.setState({
       			nodes: tangle.nodes,
       			links: tangle.links,
 			subTangleTips: c_subTangleTips,
       			nodeRadius,
-    			}, () => {
-      			// Set all nodes' x by time value after state has been set
-      			//this.recalculateFixedPositions();
     			});
 
-    			//this.force.restart().alpha(1);
 
 	
 	}
 
 
-  recalculateFixedPositions() {
-    // Set genesis's y to center
-    const genesisNode = this.state.nodes[0];
-    genesisNode.fx = this.setState.height / 2;
 
-    for (let node of this.state.nodes) {
-      node.fx = this.xFromTime(node.time);
-    }
-  }
-  xFromTime(time) {
-    const padding = this.state.nodeRadius;
-    // Avoid edge cases with 0 or 1 nodes
-    if (this.state.nodes.length < 2) {
-      return padding;
-    }
-
-    const maxTime = this.state.nodes[this.state.nodes.length-1].time;
-
-    // Rescale nodes' x to cover [margin, width-margin]
-    const scale = scaleLinear().domain([0, maxTime]);
-    scale.range([padding, this.state.width - padding]);
-
-    return scale(time);
-  }
 
 
    getApprovedNodes(root) {

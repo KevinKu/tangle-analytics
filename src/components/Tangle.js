@@ -165,26 +165,8 @@ const Tangle = props =>
               nodeRadius={props.nodeRadius}
               name={node.name}
 	      mouseEntersNodeHandler={props.mouseEntersNodeHandler}	
-		/>{/*
-            {props.showLabels && <text
-              className='unselectable'
-              fill='#666' fontFamily='Helvetica'
-              alignmentBaseline='middle' textAnchor='middle'
-              pointerEvents='none'>
-              {node.name}
-            </text>}*/}
-          </g>)}
+		/>          </g>)}
       </g>
-	{/*  <g>
-        <Axis
-          x={props.leftMargin}
-          endX={props.width - props.rightMargin}
-          y={props.height - 30}
-          ticks={8}
-          startVal={0}
-          endVal={props.nodes.length < 2 ? 1 : Math.max(...props.nodes.map(n => n.time))}
-          />
-      </g> */}
     			</svg>
 		</ReactSVGPanZoom>
     </div>;
