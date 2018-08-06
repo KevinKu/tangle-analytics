@@ -50,11 +50,60 @@ const lambdaDefault = 1.5;
 const alphaMin = 0;
 const alphaMax = 5;
 const alphaDefault = 0.5;
+
+
+
 const getTips = ({nodes, links}) => {
 	  const tips = nodes.filter(node =>
 		      !links.some(link => link.target === node));
 
 	  return new Set(tips);
+};
+
+
+
+const getAncestors = ({nodes, links, root}) => {
+	  const stack = [root];
+	  const visitedNodes = new Set();
+	  const visitedLinks = new Set();
+
+	  while (stack.length > 0) {
+		      const current = stack.pop();
+
+		      const incomingEdges = links.filter(l => l.target === current);
+		      for (let link of incomingEdges) {
+			            visitedLinks.add(link);
+			            if (!visitedNodes.has(link.source)) {
+					            stack.push(link.source);
+					            visitedNodes.add(link.source);
+					          }
+			          }
+		    }
+
+	  return {nodes: visitedNodes, links: visitedLinks};
+};
+
+
+
+const getDescendants = ({nodes, links, root}) => {
+	  const stack = [root];
+	  const visitedNodes = new Set();
+	  const visitedLinks = new Set();
+
+	  while (stack.length > 0) {
+		      const current = stack.pop();
+
+		      const outgoingEdges = links.filter(l => l.source === current);
+		      for (let link of outgoingEdges) {
+			            visitedLinks.add(link);
+			            if (!visitedNodes.has(link.target)) {
+					            stack.push(link.target);
+					            visitedNodes.add(link.target);
+					          }
+			          }
+		    }
+
+	  return {nodes: visitedNodes, links: visitedLinks};
 };
 
 
@@ -69,12 +118,12 @@ class TangleContainer extends React.Component {
       nodeCount: nodeCountDefault,
       lambda: lambdaDefault,
       alpha: alphaDefault,
-      width: 900, // default values
+      width: 900, 
       height: 300,
       nodeRadius: getNodeRadius(nodeCountDefault),
       rootTransactionHash:"",
       requestServer: iotap.create(new IOTA({
-	    'host':'http://node.deviceproof.org' ,
+	    'host':'http://iota.band' ,
 	    'port':14265 
 	})) ,
       subTangleTips:[],
@@ -98,6 +147,14 @@ class TangleContainer extends React.Component {
 
 }
 
+	ShowReferrerAndApprover(e){
+	
+	 const name = e.target.getAttribute('name');
+		    this.setState({
+			          hoveredNode: this.state.nodes.find(node => node.name === name),
+			        });
+	
+	}
 
   GraphSubTangle() {
     	const nodeRadius = getNodeRadius(1);
@@ -289,7 +346,7 @@ class TangleContainer extends React.Component {
           leftMargin={leftMargin}
           rightMargin={rightMargin}
           nodeRadius={this.state.nodeRadius}
-	  mouseEntersNodeHandler={this.ShowTransactionHash.bind(this)}
+	  mouseEntersNodeHandler={this.ShowReferrerAndApprover.bind(this)}
           approvedNodes={approved.nodes}
           approvedLinks={approved.links}
           approvingNodes={approving.nodes}
