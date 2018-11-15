@@ -2,9 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Input from '@material-ui/core/Input';
 import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+	  container: {
+		      display: 'flex',
+		      flexWrap: 'wrap',
+		    },
+	  input: {
+		      margin: theme.spacing.unit,
+		    },
+});
 
 
-function TangleManagementComponent(pros){
+
+function TangleManagementComponent(e){
 
 	return (<div>
 		<form>
@@ -15,15 +27,21 @@ function TangleManagementComponent(pros){
 	        inputProps={{
 			          'aria-label': 'Description',
 				        }}
+		onChange={e.InputHash}
 	      /></label>
-		<input type="submit" value="Graph" />
+		<input type="submit" value="Graph" onClick={e.GraphTangle} />
 		</form>
-		<Button >Stop</Button>
-		<Button >Carry on</Button>
+		<Button onClick={e.Stop}>Stop</Button>
+		<Button onClick={e.Carry}>Carry on</Button>
 		</div>);
 }
 
-
+TangleManagementComponent.propTypes = {
+	InputHash : PropTypes.func,
+	GraphTangle : PropTypes.func,
+	Stop : PropTypes.func,
+	Carry : PropTypes.func,
+};
 
 
 export default TangleManagementComponent;
