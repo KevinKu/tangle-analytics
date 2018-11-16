@@ -33,6 +33,7 @@ function TangleManagementComponent(e){
 		</form>
 		<Button onClick={e.Stop}>Stop</Button>
 		<Button onClick={e.Carry}>Carry on</Button>
+		<Button onClick={e.Clear}>Clear</Button>
 		</div>);
 }
 
@@ -41,6 +42,7 @@ TangleManagementComponent.propTypes = {
 	GraphTangle : PropTypes.func,
 	Stop : PropTypes.func,
 	Carry : PropTypes.func,
+	Clear : PropTypes.func,
 };
 
 
