@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import TangleManagementComponent from '../components/TangleManagement';
+import IOTA from 'iota.lib.js';
+import iotap from 'iotap';
 
 
 
@@ -13,6 +15,9 @@ class TangleManagementContainer extends React.Component{
 		this.state = {
 			nodes:[],
 			links:[],
+			NodeHost:'',
+			NodePort:0,
+			requestServer:0,
 			TangleRoot:"",
 			intervalID:0,
 			live:0,
@@ -21,9 +26,42 @@ class TangleManagementContainer extends React.Component{
 
 	};
 
-	InputHash(e){
+	InputNodeHost(e){
+	
+		this.setState({NodeHost : e.target.value});
+	
+	}
+
+	InputNodePort(e){
+	
+		this.setState({NodePort : e.target.value});
+	
+	}
+
+	SetNode(e){
+	
+		e.preventDefault();
+		Node = iotap.create(new IOTA({
+	    'host':this.state.NodeHost ,
+	    'port':this.state.NodePort 
+	}));
+
+
+		console.log(this.state.NodeHost);
+
+		console.log(this.state.NodePort);
+
+		console.log(Node.getNodeInfo());
+	
+		this.setState({requestServer : Node});
+
+		//console.log(this.state.requestServer.get_node_info());
+	}
+
+	InputTangleRoot(e){
 	
 		this.setState({TangleRoot : e.target.value});
+		console.log(this.state.TangleRoot);
 	};
 
 	GraphTangle(e){
@@ -177,8 +215,14 @@ class TangleManagementContainer extends React.Component{
 	return(<div>
 		
 		<TangleManagementComponent
+
+		InputNodeHost={this.InputNodeHost.bind(this)}
 		
-		InputHash={this.InputHash.bind(this)}	
+		InputNodePort={this.InputNodePort.bind(this)}
+
+		SetNode={this.SetNode.bind(this)}
+
+		InputTangleRoot={this.InputTangleRoot.bind(this)}	
 
 		GraphTangle={this.GraphTangle.bind(this)}
 

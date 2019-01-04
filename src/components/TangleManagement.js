@@ -28,7 +28,7 @@ function TangleManagementComponent(e){
                 inputProps={{
                                   'aria-label': 'Description',
                                         }}
-                onChange={e.InputHash}
+                onChange={e.InputNodeHost}
               />
 		<br/>
 		<Input
@@ -36,11 +36,11 @@ function TangleManagementComponent(e){
                 inputProps={{
                                   'aria-label': 'Description',
                                         }}
-                onChange={e.InputHash}
+                onChange={e.InputNodePort}
               />
 		</label>
 		</form>
-		<Button onClick={e.Clear}>Set Node</Button>
+		<Button onClick={e.SetNode}>Set Node</Button>
 		<form>
 		<label>
 		SubTangle : 
@@ -49,7 +49,7 @@ function TangleManagementComponent(e){
 	        inputProps={{
 			          'aria-label': 'Description',
 				        }}
-		onChange={e.InputHash}
+		onChange={e.InputTangleRoot}
 	      /></label>
 		<input type="submit" value="Graph" onClick={e.GraphTangle} />
 		</form>
@@ -60,7 +60,10 @@ function TangleManagementComponent(e){
 }
 
 TangleManagementComponent.propTypes = {
-	InputHash : PropTypes.func,
+	InputNodeHost : PropTypes.func,
+	InputNodePort : PropTypes.func,
+	SetNode : PropTypes.func,
+	InputTangleRoot : PropTypes.func,
 	GraphTangle : PropTypes.func,
 	Stop : PropTypes.func,
 	Carry : PropTypes.func,
