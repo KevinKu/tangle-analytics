@@ -21,6 +21,28 @@ function TangleManagementComponent(e){
 	return (<div>
 		<form>
 		<label>
+		Analyzed Node :
+		<br/>
+		<Input
+                placeholder="Host"
+                inputProps={{
+                                  'aria-label': 'Description',
+                                        }}
+                onChange={e.InputHash}
+              />
+		<br/>
+		<Input
+                placeholder="Port"
+                inputProps={{
+                                  'aria-label': 'Description',
+                                        }}
+                onChange={e.InputHash}
+              />
+		</label>
+		</form>
+		<Button onClick={e.Clear}>Set Node</Button>
+		<form>
+		<label>
 		SubTangle : 
 		<Input
 	        placeholder="Transaction Hash"
