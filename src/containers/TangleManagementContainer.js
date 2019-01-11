@@ -21,7 +21,6 @@ class TangleManagementContainer extends React.Component{
 			TangleRoot:"",
 			intervalID:0,
 			live:0,
-			currentTransactionHash:"",
 		};
 
 	};
@@ -83,7 +82,7 @@ class TangleManagementContainer extends React.Component{
 	Clear(e){
 	
 		e.preventDefault();
-		this.setState({nodes:[],links:[],currentTransactionHash:""});
+		this.setState({nodes:[],links:[],TangleRoot:""});
 		clearInterval(this.state.intervalID);
 
 	};
