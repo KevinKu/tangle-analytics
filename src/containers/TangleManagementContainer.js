@@ -58,9 +58,13 @@ class TangleManagementContainer extends React.Component{
 
 		e.preventDefault();	
 
-		let nodes = [];
+		let Nodes = [];
 		
-		nodes.push({});
+		Nodes.push({name:this.state.TangleRoot,height:0,nodeIndex:0,});
+
+		let ID = setInterval(()=>{this.GetNextApprovees;},3000); 
+
+		this.setState({nodes:Nodes,intervalID:ID,live:1,});
 
 			};
 
@@ -82,8 +86,8 @@ class TangleManagementContainer extends React.Component{
 	Clear(e){
 	
 		e.preventDefault();
-		this.setState({nodes:[],links:[],TangleRoot:""});
 		clearInterval(this.state.intervalID);
+		this.setState({nodes:[],links:[],TangleRoot:"",intervalID:0,live:0,});
 
 	};
 
@@ -97,10 +101,11 @@ class TangleManagementContainer extends React.Component{
 
 	Test(e){
 	
-	console.log(this.state.TangleRoot);
 
-	console.log(this.state.requestServer.getNodeInfo());
-	
+
+	console.log(this.state);
+
+
 	};
 
 	render(){
