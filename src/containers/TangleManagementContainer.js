@@ -60,9 +60,9 @@ class TangleManagementContainer extends React.Component{
 
 		let Nodes = [];
 		
-		Nodes.push({name:this.state.TangleRoot,height:0,nodeIndex:0,});
+		Nodes.push({name:this.state.TangleRoot,height:0,nodeIndex:0});
 
-		let ID = setInterval(()=>{this.GetNextApprovees;},3000); 
+		let ID = setInterval(()=>{this.GetNextApprovees();},1000); 
 
 		this.setState({nodes:Nodes,intervalID:ID,live:1,});
 
@@ -93,8 +93,95 @@ class TangleManagementContainer extends React.Component{
 
 	GetNextApprovees(){
 	
-	
+
+		//If "stop" is clicked , don't search.
+
+		if(this.state.live == 0){
+			return;
+		}
+
+		let Nodes = this.state.nodes;
+		let Links = this.state.links;
+
+		for(let searchedTransaction of this.state.nodes){
+		const approveList = this.state.requestServer.findTransactions({'approvees':[searchedTransaction.name]});
+
+		Promise.all([approveList]).then(([approveList])=>{
 		
+			if(approveList.length > 0){
+		
+			//create link and add new node to this.state.nodes.
+			for(let approveTransaction of approveList){
+				let doesApproverExist = 0;
+				let doesLinkExist = 0;
+				let approverNodeIndex = 0;
+
+				//check if approveTransaction is in Nodes. 
+
+				for(let Node of this.state.nodes){
+				if(Node.name == approveTransaction){
+					doesApproverExist = 1;
+					approverNodeIndex = Node.nodeIndex;
+				
+					}
+				}
+
+				//check if link relation is in Links when node exists in Nodes.
+
+				if(doesApproverExist == 1){
+				
+					if(Links.indexOf({source:Nodes[approverNodeIndex],target:Nodes[searchedTransaction.nodeIndex]}))
+				
+					doesLinkExist = 1;
+				}
+					
+			// Node(approver) doesn't exist and Link doesn't exist.
+			if(doesApproverExist == 0){
+			
+			let newApproverNodeIndex = Nodes.length;
+
+			Nodes.push({name:approveTransaction,height:searchedTransaction.height + 1,nodeIndex:newApproverNodeIndex});
+
+			Links.push({source:Nodes[newApproverNodeIndex],target:searchedTransaction});
+			
+			}
+			
+			
+			// Node(approver) exists and Link doesn't exist.			
+			
+			if(doesApproverExist == 1 && doesLinkExist == 0){
+			
+			Links.push({source:Nodes[approverNodeIndex],target:searchedTransaction});
+
+			let anotherHeight = Nodes[approverNodeIndex].height - 1;
+
+			if(searchedTransaction.height > anotherHeight){
+				Nodes[approverNodeIndex].height = searchedTransaction.height + 1;
+			
+			}
+			
+			}
+			
+			
+			/*
+			 Node(approver) exists and Link exists.
+			 That means both were recorded,so do nothing.
+
+			 Node(approver) doesn't exist and Link exists.
+			 Impossible case.Don't deal with it.
+			 
+			  */
+					}
+			}
+		
+		});
+		
+		// put new nodes and links in state.
+		
+		this.setState({nodes:Nodes,links:Links});
+
+		
+		}
 			
 	};
 
