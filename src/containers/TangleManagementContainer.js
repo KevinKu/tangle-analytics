@@ -62,7 +62,7 @@ class TangleManagementContainer extends React.Component{
 		
 		Nodes.push({name:this.state.TangleRoot,height:0,nodeIndex:0});
 
-		let ID = setInterval(()=>{this.GetNextApprovees();},1000); 
+		let ID = setInterval(()=>{this.GetNextApprovees();},3000); 
 
 		this.setState({nodes:Nodes,intervalID:ID,live:1,});
 
@@ -87,7 +87,7 @@ class TangleManagementContainer extends React.Component{
 	
 		e.preventDefault();
 		clearInterval(this.state.intervalID);
-		this.setState({nodes:[],links:[],TangleRoot:"",intervalID:0,live:0,});
+		this.setState({nodes:[],links:[],intervalID:0,live:0,});
 
 	};
 
@@ -118,7 +118,7 @@ class TangleManagementContainer extends React.Component{
 
 				//check if approveTransaction is in Nodes. 
 
-				for(let Node of this.state.nodes){
+				for(let Node of Nodes){
 				if(Node.name == approveTransaction){
 					doesApproverExist = 1;
 					approverNodeIndex = Node.nodeIndex;
@@ -130,9 +130,16 @@ class TangleManagementContainer extends React.Component{
 
 				if(doesApproverExist == 1){
 				
-					if(Links.indexOf({source:Nodes[approverNodeIndex],target:Nodes[searchedTransaction.nodeIndex]}))
+				for(let Link of Links){
 				
-					doesLinkExist = 1;
+					if(Link.source == Nodes[approverNodeIndex] && Link.target == searchedTransaction){
+					
+						doesLinkExist = 1;
+					
+					}
+				
+				}
+				
 				}
 					
 			// Node(approver) doesn't exist and Link doesn't exist.
@@ -180,6 +187,8 @@ class TangleManagementContainer extends React.Component{
 		
 		this.setState({nodes:Nodes,links:Links});
 
+		console.log(Nodes);
+		console.log(Links);
 		
 		}
 			
