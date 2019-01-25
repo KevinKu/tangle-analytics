@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import TangleManagementComponent from '../components/TangleManagement';
 import IOTA from 'iota.lib.js';
 import iotap from 'iotap';
+import Sender from '../sendNodesAndLinks'; 
 
 
 
@@ -100,6 +101,10 @@ class TangleManagementContainer extends React.Component{
 			return;
 		}
 
+		//send nodes and links to TangleContainer
+		
+		Sender.sendNodesAndLinks(this.state.nodes,this.state.links);	
+
 		let Nodes = this.state.nodes;
 		let Links = this.state.links;
 
@@ -187,8 +192,6 @@ class TangleManagementContainer extends React.Component{
 		
 		this.setState({nodes:Nodes,links:Links});
 
-		console.log(Nodes);
-		console.log(Links);
 		
 		}
 			
