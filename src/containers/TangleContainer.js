@@ -16,39 +16,10 @@ import Sender from '../sendNodesAndLinks';
 const mapStateToProps = (state, ownProps) => ({});
 const mapDispatchToProps = (dispatch, ownProps) => ({});
 
-const nodeRadiusMax = 25;
-const nodeRadiusMin = 13;
-const showLabelsMinimumRadius = 21;
-const getNodeRadius = nodeCount => {
-  const smallNodeCount = 20;
-  const largeNodeCount = 100;
-
-  if (nodeCount < smallNodeCount) {
-    return nodeRadiusMax;
-  }
-  if (nodeCount > largeNodeCount) {
-    return nodeRadiusMin;
-  }
-  const scale = scaleLinear().domain([smallNodeCount, largeNodeCount]);
-  scale.range([nodeRadiusMax, nodeRadiusMin]);
-
-  return scale(nodeCount);
-};
-
 
 const leftMargin = 10;
 const rightMargin = 10;
 const bottomMargin = 190;
-
-const nodeCountMin = 1;
-const nodeCountMax = 500;
-const nodeCountDefault = 20;
-const lambdaMin = 0.1;
-const lambdaMax = 50;
-const lambdaDefault = 1.5;
-const alphaMin = 0;
-const alphaMax = 5;
-const alphaDefault = 0.5;
 
 
 
@@ -114,12 +85,8 @@ class TangleContainer extends React.Component {
     this.state = {
       nodes: [],
       links: [],
-      nodeCount: nodeCountDefault,
-      lambda: lambdaDefault,
-      alpha: alphaDefault,
       width: 900, 
       height: 300,
-      nodeRadius: getNodeRadius(nodeCountDefault),
     };
 
 
@@ -129,13 +96,15 @@ class TangleContainer extends React.Component {
 
 	componentDidMount(){
 
+
         Sender.setReceiver(this.NodesAndLinksReceiver.bind(this));
 
     	}
 
 
 	NodesAndLinksReceiver(Nodes,Links){
-	
+
+
 	this.setState({nodes:Nodes,links:Links});
 	
 	}
@@ -209,7 +178,7 @@ class TangleContainer extends React.Component {
           height={height}
           leftMargin={leftMargin}
           rightMargin={rightMargin}
-          nodeRadius={this.state.nodeRadius}
+          nodeRadius={25}
 	  mouseEntersNodeHandler={this.ShowReferrerAndApprover.bind(this)}
           approvedNodes={approved.nodes}
           approvedLinks={approved.links}
@@ -220,7 +189,7 @@ class TangleContainer extends React.Component {
             nodes: this.state.nodes,
             links: this.state.links,
           })}
-          showLabels={this.state.nodeRadius > showLabelsMinimumRadius ? true : false}
+          showLabels={true}
         />
 	    <div>
 	    <p>Transaction Hash :</p>
