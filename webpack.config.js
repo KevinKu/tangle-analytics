@@ -8,7 +8,6 @@ module.exports = {
   },
   devServer: {
     contentBase: path.resolve(__dirname, 'public'),
-    host: "node0.puyuma.org",
     port: 7000,
   },
   module: {
