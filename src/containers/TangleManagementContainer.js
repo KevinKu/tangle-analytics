@@ -165,8 +165,6 @@ class TangleManagementContainer extends React.Component{
 			
 			Links.push({source:Nodes[approverNodeIndex],target:searchedTransaction});
 
-			let anotherHeight = Nodes[approverNodeIndex].height - 1;
-	
 			}
 			
 			
