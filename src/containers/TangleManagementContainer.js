@@ -61,7 +61,7 @@ class TangleManagementContainer extends React.Component{
 
 		let Nodes = [];
 		
-		Nodes.push({name:this.state.TangleRoot,height:0,nodeIndex:0});
+		Nodes.push({name:this.state.TangleRoot,nodeIndex:0,x:0,y:150});
 
 		let ID = setInterval(()=>{this.GetNextApprovees();},3000); 
 
@@ -152,7 +152,7 @@ class TangleManagementContainer extends React.Component{
 			
 			let newApproverNodeIndex = Nodes.length;
 
-			Nodes.push({name:approveTransaction,height:searchedTransaction.height + 1,nodeIndex:newApproverNodeIndex});
+			Nodes.push({name:approveTransaction,nodeIndex:newApproverNodeIndex,x:searchedTransaction.x + 500 + 250*Math.random(),y:searchedTransaction.y + (200 + approve_list.length*50)*(Math.random() - 0.5)});
 
 			Links.push({source:Nodes[newApproverNodeIndex],target:searchedTransaction});
 			
@@ -166,12 +166,7 @@ class TangleManagementContainer extends React.Component{
 			Links.push({source:Nodes[approverNodeIndex],target:searchedTransaction});
 
 			let anotherHeight = Nodes[approverNodeIndex].height - 1;
-
-			if(searchedTransaction.height > anotherHeight){
-				Nodes[approverNodeIndex].height = searchedTransaction.height + 1;
-			
-			}
-			
+	
 			}
 			
 			
