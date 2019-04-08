@@ -179,7 +179,6 @@ class TangleContainer extends React.Component {
           leftMargin={leftMargin}
           rightMargin={rightMargin}
           nodeRadius={25}
-	  mouseEntersNodeHandler={this.ShowReferrerAndApprover.bind(this)}
           approvedNodes={approved.nodes}
           approvedLinks={approved.links}
           approvingNodes={approving.nodes}
