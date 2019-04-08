@@ -125,13 +125,12 @@ const generateLinkPath = ({link, nodeRadius}) => {
 
 const Tangle = props =>
   <div >
-		    
-	 <ReactSVGPanZoom
+	<ReactSVGPanZoom
 	  background={"#ffffff"} miniaturePosition={"none"} 
           width={props.width} height={props.height}
-	  detectAutoPan={false}
-		>
-
+	  detectAutoPan={false} 
+	>	    
+	 
 	    <svg  width={props.width} height={props.height}>
       <defs>
         <Marker color='black' id='arrowhead' nodeRadius={props.nodeRadius} />
@@ -167,9 +166,9 @@ const Tangle = props =>
 	      mouseEntersNodeHandler={props.mouseEntersNodeHandler}	
 		/>          </g>)}
       </g>
-    			</svg>
-		</ReactSVGPanZoom>
-    </div>;
+ 	</svg>
+	</ReactSVGPanZoom>
+	    </div>;
 
 Tangle.propTypes = {
   links: PropTypes.array.isRequired,

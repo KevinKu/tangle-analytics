@@ -105,6 +105,7 @@ class TangleManagementContainer extends React.Component{
 		
 		Sender.sendNodesAndLinks(this.state.nodes,this.state.links);	
 
+
 		let Nodes = this.state.nodes;
 		let Links = this.state.links;
 
@@ -112,7 +113,9 @@ class TangleManagementContainer extends React.Component{
 		const approveList = this.state.requestServer.findTransactions({'approvees':[searchedTransaction.name]});
 
 		Promise.all([approveList]).then(([approveList])=>{
-		
+
+
+
 			if(approveList.length > 0){
 		
 			//create link and add new node to this.state.nodes.
@@ -146,16 +149,18 @@ class TangleManagementContainer extends React.Component{
 				}
 				
 				}
+
 					
 			// Node(approver) doesn't exist and Link doesn't exist.
 			if(doesApproverExist == 0){
 			
 			let newApproverNodeIndex = Nodes.length;
 
-			Nodes.push({name:approveTransaction,nodeIndex:newApproverNodeIndex,x:searchedTransaction.x + 500 + 250*Math.random(),y:searchedTransaction.y + (200 + approve_list.length*50)*(Math.random() - 0.5)});
+			Nodes.push({name:approveTransaction,nodeIndex:newApproverNodeIndex,x:(searchedTransaction.x + 500 + 250*Math.random()),y:(searchedTransaction.y + (200 + approveList.length*50)*(Math.random() - 0.5))});
 
 			Links.push({source:Nodes[newApproverNodeIndex],target:searchedTransaction});
-			
+		
+
 			}
 			
 			
@@ -180,7 +185,8 @@ class TangleManagementContainer extends React.Component{
 			}
 		
 		});
-		
+	
+
 		// put new nodes and links in state.
 		
 		this.setState({nodes:Nodes,links:Links});
