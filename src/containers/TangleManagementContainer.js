@@ -89,6 +89,7 @@ class TangleManagementContainer extends React.Component{
 		e.preventDefault();
 		clearInterval(this.state.intervalID);
 		this.setState({nodes:[],links:[],intervalID:0,live:0,});
+		Sender.sendNodesAndLinks([],[]);	
 
 	};
 
